@@ -69,11 +69,9 @@ def list_accounts():
     """
     app.logger.info("Request to list accounts")
 
-    #assert type(Account.all()) is list
-    #return jsonify(Account.all()), status.HTTP_200_OK
-
-    result = list(map(lambda x: x.serialize(), Account.all()))
-    return jsonify(result), status.HTTP_200_OK
+    account_list = list(map(lambda x: x.serialize(), Account.all()))
+    app.logger.info("Returning %s accounts", len(account_list))
+    return jsonify(account_list), status.HTTP_200_OK
 
 ######################################################################
 # READ AN ACCOUNT
@@ -128,7 +126,7 @@ def delete_accounts(account_id):
     app.logger.info("Request to update an Account with id=%s", account_id)
 
     account = Account.find(account_id)
-    if account is not None:
+    if account:
         account.delete()
 
     return "", status.HTTP_204_NO_CONTENT

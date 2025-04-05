@@ -168,7 +168,7 @@ class TestAccountService(TestCase):
         data = resp.get_json()
         self.assertEqual( data["email"], account.email )
 
-        # check that
+        # check that the update is persisted on the server
         resp = self.client.get(
             f"{BASE_URL}/{account_id}",
             content_type="application/json"
@@ -230,7 +230,6 @@ class TestAccountService(TestCase):
         )
         self.assertEqual( resp.status_code, status.HTTP_200_OK )
         data = resp.get_json()
-        #self.assertEqual(data,"")
         self.assertEqual(len(data),len(accounts))
         for acct, res in zip(accounts,data):
             self.assertEqual(res["name"], acct.name)
