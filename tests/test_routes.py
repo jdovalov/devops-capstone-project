@@ -141,3 +141,55 @@ class TestAccountService(TestCase):
             f"{BASE_URL}/0"
         )
         self.assertEqual( resp.status_code, status.HTTP_404_NOT_FOUND )
+
+    def test_update_account(self):
+        """ It should update a single Account """
+        # create the account that will be changed
+        account = AccountFactory(email="advent@change.me")
+        response = self.client.post(
+            BASE_URL,
+            json=account.serialize(),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        created_account = response.get_json()
+        account_id = created_account["id"]
+
+        # update the account
+        account.email = "XYZZY@plugh.com"
+        resp = self.client.put(
+            f"{BASE_URL}/{account_id}",
+            json = account.serialize(),
+            content_type="application/json"
+        )
+        # check that the updated account is returned
+        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        data = resp.get_json()
+        self.assertEqual( data["email"], account.email )
+
+        # check that
+        resp = self.client.get(
+            f"{BASE_URL}/{account_id}",
+            content_type="application/json"
+        )
+        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        final_account = resp.get_json()
+        self.assertEqual( final_account["email"], account.email )
+
+    def test_invalid_account_update(self):
+        """ It should not Update an account with invalid data """
+        account = self._create_accounts(1)[0]
+        resp = self.client.put(
+            f"{BASE_URL}/{account.id}",
+            json = "<a href='example.com'>example</a>",
+            content_type="application/json"
+        )
+        self.assertEqual( resp.status_code, status.HTTP_400_BAD_REQUEST )
+
+    def test_update_nonexistent_account(self):
+        """It should not Update an Account that does not exist"""
+        resp = self.client.put(
+            f"{BASE_URL}/0"
+        )
+        self.assertEqual( resp.status_code, status.HTTP_404_NOT_FOUND )
