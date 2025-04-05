@@ -61,8 +61,19 @@ def create_accounts():
 # LIST ALL ACCOUNTS
 ######################################################################
 
-# ... place you code here to LIST accounts ...
+@app.route("/accounts", methods=["GET"])
+def list_accounts():
+    """
+    Lists Accounts
+    This endpoint will read an Account based on the account_id that is requested
+    """
+    app.logger.info("Request to list accounts")
 
+    #assert type(Account.all()) is list
+    #return jsonify(Account.all()), status.HTTP_200_OK
+
+    result = list(map(lambda x: x.serialize(), Account.all()))
+    return jsonify(result), status.HTTP_200_OK
 
 ######################################################################
 # READ AN ACCOUNT
@@ -112,7 +123,7 @@ def update_accounts(account_id):
 def delete_accounts(account_id):
     """
     Reads an Account
-    This endpoint will update an Account based on the account_id that is requested
+    This endpoint will delete an Account based on the account_id that is requested
     """
     app.logger.info("Request to update an Account with id=%s", account_id)
 

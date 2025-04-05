@@ -221,3 +221,25 @@ class TestAccountService(TestCase):
         )
         self.assertEqual( resp.status_code, status.HTTP_204_NO_CONTENT )
         self.assertEqual( resp.text, "" )
+
+    def test_list_all_accounts(self):
+        """It should List all Accounts in the database"""
+        accounts = self._create_accounts(5)
+        resp = self.client.get(
+            BASE_URL
+        )
+        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        data = resp.get_json()
+        #self.assertEqual(data,"")
+        self.assertEqual(len(data),len(accounts))
+        for acct, res in zip(accounts,data):
+            self.assertEqual(res["name"], acct.name)
+
+    def test_list_no_accounts(self):
+        """It should List an empty database"""
+        resp = self.client.get(
+            BASE_URL
+        )
+        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        data = resp.get_json()
+        self.assertEqual(len(data),0)
