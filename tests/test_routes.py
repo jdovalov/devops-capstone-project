@@ -134,16 +134,16 @@ class TestAccountService(TestCase):
             f"{BASE_URL}/{account.id}",
             content_type="application/json"
         )
-        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        self.assertEqual( data["name"], account.name )
+        self.assertEqual(data["name"], account.name)
 
     def test_get_nonexistent_account(self):
         """It should not Read an Account that does not exist"""
         resp = self.client.get(
             f"{BASE_URL}/0"
         )
-        self.assertEqual( resp.status_code, status.HTTP_404_NOT_FOUND )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_account(self):
         """ It should update a single Account """
@@ -163,39 +163,39 @@ class TestAccountService(TestCase):
         account.email = "XYZZY@plugh.com"
         resp = self.client.put(
             f"{BASE_URL}/{account_id}",
-            json = account.serialize(),
+            json=account.serialize(),
             content_type="application/json"
         )
         # check that the updated account is returned
-        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        self.assertEqual( data["email"], account.email )
+        self.assertEqual(data["email"], account.email)
 
         # check that the update is persisted on the server
         resp = self.client.get(
             f"{BASE_URL}/{account_id}",
             content_type="application/json"
         )
-        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
         final_account = resp.get_json()
-        self.assertEqual( final_account["email"], account.email )
+        self.assertEqual(final_account["email"], account.email)
 
     def test_invalid_account_update(self):
         """ It should not Update an account with invalid data """
         account = self._create_accounts(1)[0]
         resp = self.client.put(
             f"{BASE_URL}/{account.id}",
-            json = "<a href='example.com'>example</a>",
+            json="<a href='example.com'>example</a>",
             content_type="application/json"
         )
-        self.assertEqual( resp.status_code, status.HTTP_400_BAD_REQUEST )
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_update_nonexistent_account(self):
         """It should not Update an Account that does not exist"""
         resp = self.client.put(
             f"{BASE_URL}/0"
         )
-        self.assertEqual( resp.status_code, status.HTTP_404_NOT_FOUND )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_an_account(self):
         """It should Delete an account from the database"""
@@ -207,23 +207,23 @@ class TestAccountService(TestCase):
             f"{BASE_URL}/{account.id}",
             content_type="application/json"
         )
-        self.assertEqual( resp.status_code, status.HTTP_204_NO_CONTENT )
-        self.assertEqual( resp.text, "" )
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(resp.text, "")
 
         # make sure the account no longer exists
         resp = self.client.get(
             f"{BASE_URL}/{account.id}",
             content_type="application/json"
         )
-        self.assertEqual( resp.status_code, status.HTTP_404_NOT_FOUND )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_nonexistent_account(self):
         """It should do nothing when deleting an account that does not exist"""
         resp = self.client.delete(
             f"{BASE_URL}/0"
         )
-        self.assertEqual( resp.status_code, status.HTTP_204_NO_CONTENT )
-        self.assertEqual( resp.text, "" )
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(resp.text, "")
 
     def test_list_all_accounts(self):
         """It should List all Accounts in the database"""
@@ -231,10 +231,10 @@ class TestAccountService(TestCase):
         resp = self.client.get(
             BASE_URL
         )
-        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        self.assertEqual(len(data),len(accounts))
-        for acct, res in zip(accounts,data):
+        self.assertEqual(len(data), len(accounts))
+        for acct, res in zip(accounts, data):
             self.assertEqual(res["name"], acct.name)
 
     def test_list_no_accounts(self):
@@ -242,14 +242,14 @@ class TestAccountService(TestCase):
         resp = self.client.get(
             BASE_URL
         )
-        self.assertEqual( resp.status_code, status.HTTP_200_OK )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        self.assertEqual(len(data),0)
+        self.assertEqual(len(data), 0)
 
     def test_method_not_allowed(self):
         """It should not allow illegal method calls"""
         resp = self.client.put(BASE_URL)
-        self.assertEqual( resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED )
+        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_security_headers(self):
         """It should return security headers"""
